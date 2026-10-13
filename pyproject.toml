@@ -1,0 +1,35 @@
+# Hatch builds the Python package and includes the native Vibe plugin files.
+[build-system]
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"
+
+# Both integrations are experimental, so this release supports exact versions.
+[project]
+name = "vibe-render-sandboxes"
+version = "0.1.0"
+description = "A native Vibe plugin and remote coding connection for Render Sandboxes"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.12,<3.14"
+dependencies = ["mistral-vibe==2.26.1", "render==1.2.0", "mcp>=1.28,<2", "PyYAML>=6,<7"]
+
+# Published links connect package metadata to its source and separate walkthrough.
+[project.urls]
+Repository = "https://github.com/ojusave/vibe-render-sandboxes"
+Documentation = "https://github.com/ojusave/vibe-render-sandboxes/tree/main/guide"
+Issues = "https://github.com/ojusave/vibe-render-sandboxes/issues"
+
+# These commands launch a task, install the plugin, or serve its tools.
+[project.scripts]
+vibe-render = "vibe_render.cli:main"
+
+# Tests run asynchronous socket and remote-process scenarios directly.
+[dependency-groups]
+dev = ["pytest>=9,<10", "pytest-asyncio>=1.4,<2", "ruff>=0.17,<1", "build>=1.4,<2"]
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+[tool.ruff]
+line-length = 100
+[tool.hatch.build.targets.wheel]
+packages = ["src/vibe_render"]

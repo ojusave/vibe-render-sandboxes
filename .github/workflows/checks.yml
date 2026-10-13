@@ -1,0 +1,21 @@
+# Run local checks on GitHub without any Render or model account credentials.
+name: Checks
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      # Download this revision, then install its locked Python environment.
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --python 3.12 --locked
+      # Keep Vibe's test settings in a disposable folder, away from user configuration.
+      - run: mkdir -p artifacts/test-home
+      - run: uv run pytest -q --basetemp=artifacts/unit
+        env:
+          VIBE_HOME: ${{ github.workspace }}/artifacts/test-home
+      # Check source quality and ensure both package formats can be built.
+      - run: uv run ruff check src tests examples guide
+      - run: uv run python -m build

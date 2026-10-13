@@ -1,0 +1,14 @@
+# Local environments, test caches and live-run data do not belong in the package.
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+dist/
+.vibe-render/
+.vibe/
+artifacts/
+.env
+
+# Private provider settings remain local; the placeholder template may be distributed.
+.env.*
+!.env.example

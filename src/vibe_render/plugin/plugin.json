@@ -1,0 +1,10 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "render-sandboxes",
+  "version": "0.1.0",
+  "description": "Run a bounded Vibe coding task in a temporary Render sandbox and return a reviewable patch.",
+  "keywords": ["render", "sandbox", "coding"],
+  "extensions": {
+    "ai.mistral.vibe": {"schemaVersion": 1, "toolNamespace": "renderSandbox"}
+  }
+}
