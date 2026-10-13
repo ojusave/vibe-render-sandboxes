@@ -2,93 +2,76 @@
 
 [![Checks](https://github.com/ojusave/vibe-render-sandboxes/actions/workflows/checks.yml/badge.svg)](https://github.com/ojusave/vibe-render-sandboxes/actions/workflows/checks.yml)
 
-Give [Mistral Vibe](https://github.com/mistralai/mistral-vibe), the terminal coding assistant, a separate place to edit and run code. This plugin copies your project into a temporary [Render Sandbox](https://render.com/docs/sandboxes), runs a Vibe coding task there, and returns the proposed changes for review.
+Let [Mistral Vibe](https://github.com/mistralai/mistral-vibe), the terminal coding assistant, edit and test a copy of your project in a temporary [Render Sandbox](https://render.com/docs/sandboxes). Get the proposed changes back for review. Your original source files stay unchanged until you apply them.
 
-For example, after installation, enter this in Vibe:
+[Walkthrough](guide/README.md) · [Operations](guide/operations.md) · [Test results](VALIDATION.md) · [Design](DESIGN.md)
+
+After installation, ask Vibe:
 
 ```text
 /renderSandbox:code Fix the median bug in stats.py and run the tests.
 ```
 
-Vibe can read files, make edits, and run tests against the copy. The plugin saves the changes in `changes.patch`, a file describing the edits, along with execution logs and the sandbox's cleanup status. **Your original source files stay unchanged until you choose to apply the patch.**
+The plugin returns `changes.patch`, a file describing the edits, plus execution logs and a record of whether the sandbox was stopped. You can inspect and test the changes before accepting them.
 
-Start with the quickstart below, or follow the [full walkthrough](guide/README.md) for the architecture diagram, captured output, and troubleshooting.
+## Get started
 
-## How it works
+### Prerequisites
 
-1. **Start a task from Vibe.** The `/renderSandbox:code` skill starts a separate Vibe session on your computer and copies the selected project's source to Render.
-2. **Edit and test in Render.** That session calls the model from your computer, while its file and shell actions execute in the sandbox. Results return to Vibe so it can inspect failures and try again.
-3. **Review the result.** The plugin downloads a patch and attempts sandbox termination. It saves a run record, called a receipt, with the outcome, patch path, and confirmed cleanup status.
+You need macOS or Linux, [Git](https://git-scm.com/install/), [uv](https://docs.astral.sh/uv/getting-started/installation/) to install Python and its libraries, a [Render workspace with Sandboxes enabled](https://render.com/docs/sandboxes#1-confirm-access), and Mistral model access. An API key is a secret that authorizes software to make requests to your account. The [credential table](guide/README.md#prerequisites) explains which keys and workspace identifier to supply.
 
-The plugin provides `start_task`, `task_status`, and `cancel_task` through the Model Context Protocol (MCP), the interface Vibe uses to discover and call tools. The installed skill uses those tools to start work and check progress. Ask it to cancel when you want an active task stopped.
+Render compute and model requests incur charges. The repair example creates two temporary sandboxes, one for coding and one for independent verification.
 
-Render and model credentials are read on your computer and are not injected into the sandbox. Source contents and tool results are sent to the selected model service. **Only the separate coding task uses Render.** The outer Vibe chat and its other tools retain their normal access to your computer.
+### Set up with your coding assistant
 
-## Prerequisites
+Open your coding assistant in the Git project you want to work on and paste this prompt. It sets up the plugin; the paid example is a separate step.
 
-- **macOS or Linux**, [Git](https://git-scm.com/install/), and [uv](https://docs.astral.sh/uv/getting-started/installation/). The installation command uses uv to install Python 3.12 and the required libraries.
-- **A Render workspace with Sandboxes enabled.** Check for **Sandbox Group** in the Dashboard's **+ New** menu. See [access requirements](https://render.com/docs/sandboxes#1-confirm-access).
-- **Mistral API access** to a model that can request tools. The sample uses `mistral-medium-3-5`, which passed the recorded live tests.
+```text
+Set up the Render Sandboxes plugin for Mistral Vibe in this Git project.
+Use https://github.com/ojusave/vibe-render-sandboxes and its guide/README.md.
 
-Render compute and model requests incur charges. The example below creates two temporary sandboxes: one for coding and one for independent verification.
+1. Inspect this project. Reuse an existing plugin checkout or clone it
+   into a separate folder. Install the versions pinned in uv.lock.
+2. Follow the guide's credential setup, preserving existing settings.
+   Have me enter missing secrets in a local editor. Never print keys.
+3. Follow "Use the plugin in your project", including the ignore rules.
+   Inspect an existing installation instead of overwriting it.
+4. Run the local checks in guide/operations.md. Verify this project's
+   plugin points to the intended Python environment and settings file.
+5. Report what passed, any blocked step, and the exact command to open
+   the installed Vibe in this project. Include a sample sandbox task.
 
-> [!NOTE]
-> This is a community development preview, pinned to **Mistral Vibe 2.26.1** and **Render's Python SDK 1.2.0**. The SDK is the library the plugin uses to communicate with Render. Render Sandboxes is in early access, and Vibe's remote execution connection is experimental.
+Stop after setup. Do not start paid tasks or apply source patches.
+Report installation and local checks separately from live testing.
+If setup fails, name the failing step and next action.
+```
 
-## Quickstart
+### Set up manually
 
-Run these commands in a terminal on your computer.
-
-### 1. Install the plugin's environment
+In a terminal, enter the folder where you keep projects, then run:
 
 ```shell
-# Download the repository and enter its folder.
+# Download the plugin and enter its folder.
 git clone https://github.com/ojusave/vibe-render-sandboxes.git
 cd vibe-render-sandboxes
-# Install the tested library versions into the local .venv folder.
+# Install Python 3.12, the plugin, and the supported Vibe version.
 uv sync --python 3.12 --locked
 ```
 
-The `.venv` folder is a Python virtual environment: it holds this plugin's Python executable and libraries. It includes the supported Vibe version, so a separate global Vibe installation is unnecessary.
+[Configure your private settings file](guide/README.md#2-configure-access), then choose [the repair example below](#try-the-repair-example) or [install into your own project](guide/README.md#5-use-the-plugin-in-your-project).
 
-### 2. Configure access
+## Try the repair example
 
-Create a private settings file. These commands are silent on success:
-
-```shell
-# Keep local settings in a folder excluded from Git and sandbox uploads.
-mkdir -p .vibe
-# Copy the template without overwriting an existing settings file.
-cp -n .env.example .vibe/render.env
-# Allow only your computer's user account to read or change the file.
-chmod 600 .vibe/render.env
-```
-
-Open `.vibe/render.env` in your editor and replace the placeholders. An API key is a secret that authorizes software to send requests to a service's application programming interface (API).
-
-| Setting | Where to get it | What it does |
-| --- | --- | --- |
-| `RENDER_API_KEY` | [Render Account Settings](https://render.com/docs/api#1-create-an-api-key) | Authorizes sandbox operations in a workspace your account can access |
-| `RENDER_WORKSPACE_ID` | Workspace **Settings** in the [Render Dashboard](https://dashboard.render.com/) | Selects where sandboxes run; this `tea-...` identifier is not a secret |
-| `MISTRAL_API_KEY` | [Mistral's API key page](https://console.mistral.ai/api-keys) | Authorizes the model requests made by Vibe |
-| `VIBE_RENDER_MODEL` | Leave `mistral-medium-3-5` if available to your account | Selects the model used for the coding task |
-
-The plugin reads this file directly; you do not need to put keys into terminal commands. Keep it private and out of commits. If you already use the Render command-line program, you can [reuse its saved login](guide/operations.md#reuse-a-render-cli-login) instead of setting `RENDER_API_KEY`.
-
-### 3. Try the repair example
-
-From the `vibe-render-sandboxes` folder, run:
+From the configured `vibe-render-sandboxes` folder, run:
 
 ```shell
-# Run a real coding task through the installed plugin and independently check its patch.
+# Ask Vibe to repair the sample in Render, then independently test its patch.
 .venv/bin/python guide/run_example.py --env-file "$PWD/.vibe/render.env"
 ```
 
-The helper installs the plugin into a disposable copy of [the sample project](examples/tiny-calc). Its broken median function returns **3 instead of 2.5** for `[4, 1, 3, 2]`. It also changes the input list and mishandles empty input.
+The sample's median function returns **3 instead of 2.5** for `[4, 1, 3, 2]`. The helper installs the plugin into a disposable sample project, asks Vibe to fix it, and checks the changes in a fresh sandbox using protected tests and additional cases.
 
-Vibe repairs the function in Render. The helper applies the returned patch to a separate review copy, then runs the protected original tests and additional cases in a fresh Render sandbox. It checks the result independently of Vibe's completion message.
-
-A successful run ends with these lines, captured from the published-source test:
+Successful output, excerpted from the recorded live run:
 
 ```text
 Independent verification: passed
@@ -96,67 +79,24 @@ Original project: unchanged
 Coding and verification sandboxes: terminated
 ```
 
-The terminal prints an `Evidence:` folder containing the patch location, test results, and both sandbox cleanup results. Startup and model responses can take time; keep the command running until verification finishes. See the [walkthrough's output explanation](guide/README.md#4-inspect-the-result-and-cleanup) if a check fails.
+The command prints an `Evidence:` folder with the patch and test results. Startup can be quiet; wait for verification to finish. See [result inspection and cleanup](guide/README.md#4-inspect-the-result-and-cleanup) for the files to check.
 
-## Use it in your project
+## How it works
 
-Start with a small Git project whose dependencies are already available in the sandbox. **Outbound network access is denied**, so commands cannot download packages. The sample above only needs Python's built-in libraries.
+1. The plugin copies your project to Render and starts a separate Vibe coding session on your computer.
+2. That session requests model responses from your computer. Its file edits and commands execute in the sandbox.
+3. The plugin downloads a patch, attempts sandbox termination, and saves the cleanup result alongside the logs.
 
-From the downloaded `vibe-render-sandboxes` folder, install into your project's root:
+Account keys remain on your computer. Source contents and tool results go to the selected model service. Only the separate coding task uses Render; the outer Vibe chat retains its normal access to your computer. The guide includes an [architecture diagram](guide/README.md#how-it-works).
 
-```shell
-# Replace this with the absolute path to your Git project.
-PROJECT=/absolute/path/to/your/project
-# Register the plugin for this project using your private settings file.
-.venv/bin/vibe-render install --project "$PROJECT" \
-  --env-file "$PWD/.vibe/render.env" --provider mistral
-```
+## Status and limits
 
-The installer prints `Installed .../.vibe/plugins/render-sandboxes`. It preserves an existing installation by refusing to overwrite it. Keep this downloaded folder and `.venv` in place because the installed plugin points to their absolute paths.
+Community development preview, pinned to **Vibe 2.26.1** and **Render's Python library 1.2.0**. Render Sandboxes is in early access, and Vibe's remote execution connection is experimental.
 
-Add `.vibe/` and `.vibe-render/` to the target project's `.gitignore` file. This keeps local settings, copied source, prompts, and run logs out of commits. Review the source you intend to upload: common secret filenames are excluded, but a secret embedded in an ordinary source file can still be copied.
+Outbound networking is denied, so projects need dependencies already available in the sandbox. There are no public app previews or persistent coding sessions. See [dependencies and limits](guide/operations.md#dependencies-and-limits) for supported project sizes, task deadlines, and the optional snapshot path.
 
-Open the supported Vibe executable in that project:
+[Recorded verification](VALIDATION.md) includes 20 automated tests and live coding runs with direct Mistral and OpenRouter, independent patch checks, and confirmed cleanup. The outer interactive Vibe chat and prepared dependency snapshots have not been live-tested.
 
-```shell
-# Save the executable's location before changing folders.
-VIBE_EXECUTABLE="$PWD/.venv/bin/vibe"
-cd "$PROJECT"
-# Start Vibe in the project where the plugin is installed.
-"$VIBE_EXECUTABLE"
-```
-
-Complete Vibe's normal login and trust prompt if needed. The outer chat uses its own model settings; `.vibe/render.env` configures the separate plugin task. If Vibe was already open, use `/reload`, then enter `/renderSandbox:code` followed by your task and test command.
-
-Each run saves its patch, source manifest, logs, and `receipt.json` under `<project>/.vibe-render/runs/<run-id>/`. A receipt with `cleanup: terminated` confirms that exact sandbox ID was found in Render's terminated list. Review the patch and test output before applying it. The [operations guide](guide/operations.md#review-and-apply-a-patch) includes the review, application, and cleanup commands.
-
-## Compatibility and limits
-
-| Area | Current support |
-| --- | --- |
-| Models tested | Direct Mistral: `mistral-medium-3-5`; [OpenRouter option](guide/operations.md#model-selection-and-openrouter): `mistralai/devstral-2512` |
-| Task limits | Five-minute coding deadline by default, at most 20 model turns and 100,000 tokens |
-| Project size | At most 5,000 files and 50 MiB; symbolic links and Git submodules are rejected |
-| Dependencies | A trusted prepared snapshot can supply installed packages; this optional path has not been live-validated |
-| Execution scope | One active task per project; no public app previews, persistent sessions, Windows support, or automatic patch application |
-
-The time and token limits do not guarantee a dollar cost. If the host disappears, a finite sandbox lifetime provides a cleanup fallback. Check the receipt and follow [recovery instructions](guide/operations.md#cleanup-and-recovery) when termination is unconfirmed.
-
-## Verification and development
-
-[VALIDATION.md](VALIDATION.md) records **20 passing automated tests**, live coding runs through both model routes, an additional run from the published GitHub source, independent patch checks, and confirmed cleanup. The outer interactive Vibe chat has not been automated in those tests; the native plugin inspector, installed tool server, and actual child Vibe session have been exercised.
-
-To run the checks that require no account keys, return to the downloaded plugin folder:
-
-```shell
-# Keep test-only Vibe settings separate from your normal profile.
-mkdir -p artifacts/test-home
-VIBE_HOME="$PWD/artifacts/test-home" .venv/bin/pytest -q --basetemp=artifacts/unit
-# Check the Python files and build the installable package.
-.venv/bin/ruff check src tests examples guide
-.venv/bin/python -m build
-```
-
-The [GitHub workflow](.github/workflows/checks.yml) runs these checks on Linux. The paid walkthrough adds real model and Render calls. For implementation details and existing alternatives, read [DESIGN.md](DESIGN.md).
+For development, run the [local checks](guide/operations.md#development-checks). For returned changes, follow [patch review and application](guide/operations.md#review-and-apply-a-patch).
 
 [MIT licensed](LICENSE). This is an independent integration example, not an official Mistral or Render product.

@@ -68,3 +68,11 @@ Coding run `0a0973e463084335b325b8f9cb7c7e7a` produced a 940-byte patch. The ori
 GitHub's [Linux test and build workflow](https://github.com/ojusave/vibe-render-sandboxes/actions/runs/38377038805) passed all 20 tests, Ruff, and both package builds. The guide and Mermaid diagram were rendered at desktop and narrow widths locally and inspected on GitHub. Local relative links were checked. Authored guide links specify safe new-tab attributes; GitHub strips those attributes and controls navigation on its rendered pages.
 
 The staged files and built archives were scanned against the actual credentials used for validation, with zero matches. Private settings, raw runs, environments, and cache files were excluded. A final portability adjustment makes the guide's trusted before-state check use its selected Python interpreter instead of assuming a global `python3` command; this does not change the remote coding or verification path.
+
+## README setup verification
+
+The October 13, 2026 README revision adds a copyable coding-assistant setup prompt and links to the separate guide for credentials, project installation, and operations. The documented development block was executed directly from `guide/operations.md`: all 20 tests passed, Ruff passed, and both packages built. Local documentation links and heading targets were checked, and all shell blocks in the changed README and operations guide passed shell syntax checks.
+
+A disposable Git project exercised the guide's installation command with a private placeholder settings file. Vibe's native inspector recognized the `renderSandbox` namespace and `code` skill. The installed `run-server` program exposed `start_task`, `task_status`, and `cancel_task`. The recorded interpreter and settings paths matched the intended installation; the settings file had mode 0600. Reinstalling preserved the existing wrapper, and a missing settings file was rejected.
+
+This was a local setup check, not a new paid coding run or an independent agent trial of the setup prompt. No sandbox task was started. The earlier live evidence above remains the evidence for model calls, patch correctness, and remote cleanup.
