@@ -58,3 +58,13 @@ The separate `guide/` follows the existing OpenAI Agents and OpenRouter guide st
 Run `d6d2f93d35634b1f973a7fb5f1cdba4c` reproduced the original failing tests, returned a 1261-byte patch, preserved the original source and tests, passed independent verification in a fresh Render sandbox, and confirmed both exact sandbox IDs terminated. Local evidence is retained under `artifacts/guide-20261013-022833/`; raw evidence and credentials are excluded from the public repository.
 
 All 20 unit tests, Ruff, source archive construction, and wheel construction passed after adding the guide helper. The public repository includes a GitHub Actions workflow for these credential-free checks. A passing workflow does not stand in for the paid live run.
+
+## GitHub source verification
+
+Published source revision: [`c38be771f6bc2fa6b7481c1ff8e4bbbfb992f858`](https://github.com/ojusave/vibe-render-sandboxes/commit/c38be771f6bc2fa6b7481c1ff8e4bbbfb992f858). Downloaded the source archive from GitHub into a disposable installation folder and compared all 31 files byte-for-byte with the reviewed commit. A separate `uv sync --python 3.12 --locked` environment installed successfully. The documented `guide/run_example.py` then ran against real Mistral and Render services using the existing private credential file.
+
+Coding run `0a0973e463084335b325b8f9cb7c7e7a` produced a 940-byte patch. The original failing tests were reproduced, original project files remained unchanged, the four preserved tests and independent cases passed, and both sandbox IDs were confirmed terminated. This was a new live run from the published source, not a replay of the earlier receipts. The GitHub source download and installation were tested; the clone URL was verified against the published repository without creating a second working clone.
+
+GitHub's [Linux test and build workflow](https://github.com/ojusave/vibe-render-sandboxes/actions/runs/38377038805) passed all 20 tests, Ruff, and both package builds. The guide and Mermaid diagram were rendered at desktop and narrow widths locally and inspected on GitHub. Local relative links were checked. Authored guide links specify safe new-tab attributes; GitHub strips those attributes and controls navigation on its rendered pages.
+
+The staged files and built archives were scanned against the actual credentials used for validation, with zero matches. Private settings, raw runs, environments, and cache files were excluded. A final portability adjustment makes the guide's trusted before-state check use its selected Python interpreter instead of assuming a global `python3` command; this does not change the remote coding or verification path.

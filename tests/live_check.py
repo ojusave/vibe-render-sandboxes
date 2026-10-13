@@ -6,6 +6,7 @@ import json
 import os
 import shutil
 import subprocess
+import sys
 import time
 from pathlib import Path
 
@@ -83,7 +84,7 @@ async def plugin_run(output):
     await asyncio.to_thread(subprocess.run, ["git", "init", "-q", str(project)], check=True)
     baseline = await asyncio.to_thread(
         subprocess.run,
-        ["python3", "-m", "unittest", "-v"],
+        [sys.executable, "-m", "unittest", "-v"],
         cwd=project, capture_output=True, text=True, check=False,
     )
     (output / "baseline-tests.log").write_text(baseline.stdout + baseline.stderr)
