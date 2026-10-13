@@ -71,8 +71,10 @@ The staged files and built archives were scanned against the actual credentials 
 
 ## README setup verification
 
-The October 13, 2026 README revision adds a copyable coding-assistant setup prompt and links to the separate guide for credentials, project installation, and operations. The documented development block was executed directly from `guide/operations.md`: all 20 tests passed, Ruff passed, and both packages built. Local documentation links and heading targets were checked, and all shell blocks in the changed README and operations guide passed shell syntax checks.
+The README documents installation, credentials, registration in an existing Git project, launching Vibe, and reviewing the result. The separate guide retains the reproducible repair task and operational details.
 
-A disposable Git project exercised the guide's installation command with a private placeholder settings file. Vibe's native inspector recognized the `renderSandbox` namespace and `code` skill. The installed `run-server` program exposed `start_task`, `task_status`, and `cancel_task`. The recorded interpreter and settings paths matched the intended installation; the settings file had mode 0600. Reinstalling preserved the existing wrapper, and a missing settings file was rejected.
+On October 13, 2026, the README's settings and installation commands were run in a disposable Git project, including a project path containing spaces. The settings file had mode 0600. The documented launch sequence resolved the expected Vibe executable; it was invoked with `--help` for this local check. The actual installed tool server exposed `start_task`, `task_status`, and `cancel_task`. All 14 local links and heading targets were checked, and all four shell blocks passed syntax checks.
 
-This was a local setup check, not a new paid coding run or an independent agent trial of the setup prompt. No sandbox task was started. The earlier live evidence above remains the evidence for model calls, patch correctness, and remote cleanup.
+The earlier setup check also confirmed Vibe's native `renderSandbox` namespace and `code` skill, preservation of an existing installation, and rejection of a missing settings file. The development commands in `guide/operations.md` passed all 20 tests, Ruff, and both package builds. No runtime code changed in the README revision.
+
+These documentation checks used placeholder credentials and did not start a sandbox task or exercise the outer interactive chat. The earlier live evidence above remains the evidence for model calls, patch correctness, and remote cleanup.
