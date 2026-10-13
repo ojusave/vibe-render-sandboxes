@@ -4,7 +4,7 @@ Use these instructions after the <a href="README.md" target="_blank" rel="noopen
 
 ## Reuse a Render CLI login
 
-The Render command-line program (CLI) can authenticate through your browser. This is the Render authentication path used in the recorded live tests. Install <a href="https://render.com/docs/cli" target="_blank" rel="noopener noreferrer">Render CLI</a> 2.28.0 or later and run:
+The Render command-line program (CLI) can authenticate through your browser. Install <a href="https://render.com/docs/cli" target="_blank" rel="noopener noreferrer">Render CLI</a> 2.28.0 or later and run:
 
 ```shell
 # Open the browser login and select the workspace where sandboxes should run.
@@ -111,22 +111,3 @@ The guide keeps raw evidence locally. Logs, prompts, and copied source can conta
 ## Remove the project installation
 
 Finish or cancel active tasks and verify cleanup first. Then remove only `<project>/.vibe/plugins/render-sandboxes` using your file manager. Reload Vibe with `/reload`. This removes this project's plugin registration; it does not delete evidence, credentials, or remote resources. If you later reinstall, run the installer from the plugin environment you intend to keep.
-
-## Development checks
-
-After installing the plugin's Python environment, run these commands from the downloaded `vibe-render-sandboxes` folder. They check the code and build the installable package without using account keys or creating Render resources:
-
-```shell
-# Keep test-only Vibe settings separate from your normal profile.
-mkdir -p artifacts/test-home
-# Run the automated checks in a disposable local test folder.
-VIBE_HOME="$PWD/artifacts/test-home" .venv/bin/pytest -q --basetemp=artifacts/unit
-# Check the Python files for common mistakes and formatting issues.
-.venv/bin/ruff check src tests examples guide
-# Build the source archive and installable package in dist/.
-.venv/bin/python -m build
-```
-
-Success means the tests pass, Ruff reports `All checks passed!`, and both package files are built. These checks include Vibe's native plugin validation and tool discovery. They use temporary test projects, so also inspect your target project's `.vibe/plugins/render-sandboxes/run-server`: its Python, project, and settings paths must match your installation. This file contains paths, not credential values; do not print the contents of the settings file it references.
-
-Local checks do not verify your Render or model access. The <a href="README.md#3-run-and-independently-verify-the-example" target="_blank" rel="noopener noreferrer">paid repair example</a> tests those connections and independently checks the returned patch. The <a href="../.github/workflows/checks.yml" target="_blank" rel="noopener noreferrer">GitHub workflow</a> runs the local checks on Linux.

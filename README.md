@@ -5,9 +5,7 @@
 
 **Run Vibe coding tasks in a temporary cloud environment.**
 
-[![Checks](https://github.com/ojusave/vibe-render-sandboxes/actions/workflows/checks.yml/badge.svg)](https://github.com/ojusave/vibe-render-sandboxes/actions/workflows/checks.yml)
-
-[Install](#installation) · [Usage](#usage) · [Guide](guide/README.md) · [Test results](VALIDATION.md)
+[Install](#installation) · [Usage](#usage) · [Guide](guide/README.md)
 
 </div>
 
@@ -112,12 +110,10 @@ flowchart TB
 
 Render and model keys stay on your computer. Source contents and tool results go to the selected model service. Review source before uploading: common secret filenames are excluded, but secrets embedded in ordinary source files can still be copied. Only the separate coding task runs in Render; the outer Vibe chat and its other tools keep their normal access to your computer.
 
-## Example and verification
+## Try the sample project
 
 The [step-by-step guide](guide/README.md) runs a complete repair: Vibe fixes a median function from **3 to 2.5** for `[4, 1, 3, 2]`. A second sandbox checks the returned patch against protected tests and additional cases. The guide includes the runnable command, captured output, and cleanup checks.
 
-[VALIDATION.md](VALIDATION.md) records 20 passing automated tests and live runs with direct Mistral and OpenRouter. For local development, use the [test and build commands](guide/operations.md#development-checks).
-
-Render Sandboxes is in early access, and Vibe's remote execution connection is experimental. The outer interactive Vibe chat and prepared dependency snapshots have not been live-tested. This preview handles one task per project and does not provide public app previews or persistent coding sessions. See [limits](guide/operations.md#dependencies-and-limits), [cleanup and recovery](guide/operations.md#cleanup-and-recovery), and [design and alternatives](DESIGN.md).
+Render Sandboxes is in early access, and Vibe's remote execution connection is experimental. The outer interactive Vibe chat and prepared dependency snapshots have not been live-tested. This preview handles one task per project and does not provide public app previews or persistent coding sessions. See [limits](guide/operations.md#dependencies-and-limits), [cleanup and recovery](guide/operations.md#cleanup-and-recovery).
 
 [MIT licensed](LICENSE). This is an independent integration example, not an official Mistral or Render product.

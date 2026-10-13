@@ -34,7 +34,7 @@ The plugin keeps account keys on your computer. Neither Render nor Mistral crede
 Only the child coding task uses this connection. Your outer Vibe chat and its other tools keep their normal access to your computer. This is a native terminal Vibe plugin, separate from Mistral's web products.
 
 > [!NOTE]
-> <a href="https://render.com/docs/sandboxes" target="_blank" rel="noopener noreferrer">Render Sandboxes is in early access</a>, and Vibe's agent socket is experimental. This example pins the tested versions. Discuss production workloads with your Render contact.
+> <a href="https://render.com/docs/sandboxes" target="_blank" rel="noopener noreferrer">Render Sandboxes is in early access</a>, and Vibe's agent socket is experimental. This example pins its library versions. Discuss production workloads with your Render contact.
 
 ## Prerequisites
 
@@ -65,7 +65,7 @@ cd vibe-render-sandboxes
 uv sync --python 3.12 --locked
 ```
 
-Installation creates `.venv/bin/vibe-render` and `.venv/bin/vibe`. The repository also contains `guide/`, `tests/`, and `examples/tiny-calc/`. This path installs Vibe 2.26.1 alongside the plugin, so you do not need a separate global Vibe installation.
+Installation creates `.venv/bin/vibe-render` and `.venv/bin/vibe`. This path installs Vibe 2.26.1 alongside the plugin, so you do not need a separate global Vibe installation.
 
 ## 2. Configure access
 
@@ -84,7 +84,7 @@ Open `.vibe/render.env` in a text editor. Dot-prefixed folders may be hidden, so
 
 The helper reads this file directly. You do not need to paste keys into commands or load the file into your shell. Keep it outside commits and screenshots. The file is retained locally so the installed plugin can read it on later runs.
 
-If you already use Render's command-line program, you can reuse its login instead of creating another Render key. See <a href="operations.md#reuse-a-render-cli-login" target="_blank" rel="noopener noreferrer">the tested CLI login option</a>.
+If you already use Render's command-line program, you can reuse its login instead of creating another Render key. See <a href="operations.md#reuse-a-render-cli-login" target="_blank" rel="noopener noreferrer">the CLI login option</a>.
 
 ## 3. Run and independently verify the example
 
@@ -129,8 +129,6 @@ Open the `Evidence:` folder printed by the command:
 | `independent-checks.log` | The four original tests and two extra test methods finish with `OK`; the first extra method checks six numeric cases and preserves inputs |
 | The receipt's `patch` path | The proposed changes, saved before the coding sandbox was stopped |
 
-These are the checkpoints captured in <a href="../VALIDATION.md" target="_blank" rel="noopener noreferrer">the validation record</a>. The helper additionally checks that the model did not change the protected test file and that generated Python cache files are absent from the patch.
-
 The helper stops the coding sandbox before starting verification, then stops the verifier even if its tests fail. It confirms each exact sandbox ID is in Render's terminated list. Termination destroys the remote filesystem. The patch, original source copy, and logs remain on your computer under `artifacts/`; review them before deleting that folder.
 
 No hosted model session or permanent Render service is created. The local credential file remains in `.vibe/render.env`; remove that file after your last use if you do not want to retain credentials. Removing local files does not stop a sandbox. If cleanup is unconfirmed, use the recorded sandbox ID and <a href="operations.md#cleanup-and-recovery" target="_blank" rel="noopener noreferrer">retry termination</a> first.
@@ -171,10 +169,9 @@ The outer chat has its own <a href="https://github.com/mistralai/mistral-vibe/tr
 
 Replace that example with your project's bug and test command. The skill starts one task, reports its run ID, checks progress, and returns the patch location and cleanup status. Ask it to cancel if you want to stop an active task.
 
-This walkthrough's automated test covers native plugin validation, its installed tool program, and the real child Vibe session. It does not automate the outer interactive chat UI. Independently test changes from your own project before accepting them. See <a href="operations.md#review-and-apply-a-patch" target="_blank" rel="noopener noreferrer">patch review and application</a> for the next commands.
+Review changes from your own project before accepting them. See <a href="operations.md#review-and-apply-a-patch" target="_blank" rel="noopener noreferrer">patch review and application</a> for the next commands.
 
 ## Related guides
 
 - <a href="https://github.com/ojusave/openrouter-sandboxes/blob/main/guides/openrouter-sandboxes.md" target="_blank" rel="noopener noreferrer">Run OpenRouter agents in Render Sandboxes</a>
 - <a href="https://render.com/docs/sandboxes" target="_blank" rel="noopener noreferrer">Render Sandboxes and SDK references</a>
-- <a href="../DESIGN.md" target="_blank" rel="noopener noreferrer">Existing Vibe sandbox integrations and this plugin's design</a>
