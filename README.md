@@ -7,7 +7,7 @@ Give [Mistral Vibe](https://github.com/mistralai/mistral-vibe), the terminal cod
 For example, after installation, enter this in Vibe:
 
 ```text
-/renderSandbox:code Fix the median calculation in stats.py. Preserve the input list and run python3 -m unittest -v.
+/renderSandbox:code Fix the median bug in stats.py and run the tests.
 ```
 
 Vibe can read files, make edits, and run tests against the copy. The plugin saves the changes in `changes.patch`, a file describing the edits, along with execution logs and the sandbox's cleanup status. **Your original source files stay unchanged until you choose to apply the patch.**
